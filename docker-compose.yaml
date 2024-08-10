@@ -1,0 +1,42 @@
+version: "3"
+
+services:
+  nginx:
+    image: nginx:stable-alpine
+    container_name: macro_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./src:/var/www/public
+      - ./docker/nginx:/etc/nginx/conf.d
+    links:
+      - php
+
+  php:
+    build: ./docker/php
+    container_name: macro_php
+    volumes:
+      - ./src:/var/www/public
+    links:
+      - mysql
+
+  mysql:
+    image: mysql:latest
+    container_name: macro_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: test
+      MYSQL_DATABASE: test
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: macro_phpmyadmin
+    restart: unless-stopped
+    environment:
+      - PMA_ARBITRARY=1
+      - UPLOAD_LIMIT=1024M
+      - MEMORY_LIMIT=1024M
+      - MAX_EXECUTION_TIME=300
+    ports:
+      - "8000:80"
+    links:
+      - mysql
