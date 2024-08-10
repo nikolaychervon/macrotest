@@ -9,6 +9,7 @@ validatenv:
 
 init: validatenv
 	docker-compose up --build -d
+	docker exec macro_php composer install
 
 dump-db: validatenv
 	cat ./docker/mysql/dump.sql | docker exec -i macro_mysql /usr/bin/mysql \
